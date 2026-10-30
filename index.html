@@ -4,99 +4,155 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1e5fa8">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MT Request">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>ใบขอสร้าง/ซ่อม</title>
 <style>
-:root{--b:#1e5fa8;--bg:#f2f5f9;--t:#1d2733;--m:#6b7785;--ok:#1a9a52;--no:#d33c3c;--w:#e08a00}
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,"Noto Sans Thai",sans-serif;background:var(--bg);color:var(--t)}
-header{background:var(--b);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
-header button{background:none;border:1px solid #fff8;color:#fff;border-radius:8px;padding:6px 10px}
-main{max-width:680px;margin:0 auto;padding:12px}
-.card{background:#fff;border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px #0001}
-.sec{background:var(--b);color:#fff;margin:-14px -14px 10px;padding:9px 14px;border-radius:12px 12px 0 0;font-weight:600}
+:root{--b:#1e5fa8;--b2:#2f80d8;--bg:#eef2f7;--card:#fff;--t:#16202c;--m:#66758a;--line:#e3e9f0;--in:#fff;--ok:#16a05a;--no:#dc3b3b;--w:#e8890c;--o:#c2410c;--r:16px;--nav:64px;--sh:0 1px 2px #0f172a0d,0 6px 20px #0f172a0f}
+@media(prefers-color-scheme:dark){:root{--b:#3b82d6;--b2:#4f9be8;--bg:#0e141b;--card:#18212b;--t:#e8eef5;--m:#93a3b8;--line:#263341;--in:#111a23;--sh:0 1px 2px #0006}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.5 system-ui,-apple-system,"Segoe UI","Noto Sans Thai",sans-serif;background:var(--bg);color:var(--t);padding:0 env(safe-area-inset-right) 0 env(safe-area-inset-left)}
+.hide{display:none!important}
+header{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;background:linear-gradient(135deg,var(--b),var(--b2));color:#fff;box-shadow:0 2px 12px #0003}
+.logo{display:flex;align-items:center;gap:8px;font-size:18px;white-space:nowrap}.logo i{font-style:normal;background:#ffffff2e;border-radius:10px;padding:2px 7px}
+#who{display:flex;align-items:center;gap:6px;min-width:0;font-size:14px}.nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:34vw}
+header button{background:#ffffff26;border:0;color:#fff;border-radius:10px;min-height:36px;padding:0 12px;font:inherit;font-size:14px}
+main{max-width:720px;margin:0 auto;padding:14px 14px calc(var(--nav) + 36px + env(safe-area-inset-bottom))}
+.card{background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:var(--sh);animation:up .25s ease both}
+@keyframes up{from{opacity:0;transform:translateY(6px)}}
+fieldset{border:0;min-width:0;margin:0}
+.sec{background:linear-gradient(135deg,var(--b),var(--b2));color:#fff;margin:-16px -16px 12px;padding:11px 16px;border-radius:var(--r) var(--r) 0 0;font-weight:600}
 .sec small{font-weight:400;opacity:.85}
-label.l{display:block;font-size:13px;color:var(--m);margin:12px 0 4px}label.l small{opacity:.7}
-input,select,textarea{width:100%;padding:11px;border:1px solid #cfd6df;border-radius:8px;font:inherit;background:#fff}
-textarea{min-height:80px}
-.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{position:relative}.chip input[type=radio]{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
-.chip span{display:block;padding:10px 14px;border:1.5px solid #cfd6df;border-radius:99px;background:#fff;font-size:14px}
-.chip input:checked+span{background:var(--b);border-color:var(--b);color:#fff}
-.row{display:flex;gap:8px}.row>*{flex:1;min-width:0}
-button.p{width:100%;padding:13px;border:0;border-radius:10px;background:var(--b);color:#fff;font:600 16px inherit;margin-top:14px}
-button.g{background:var(--ok)}button.r{background:var(--no)}button.s{background:#6b7785}button:disabled{opacity:.5}
-button.mini{border:0;background:#e6ebf1;border-radius:8px;padding:6px 12px;margin-top:6px;font-size:13px}
-.tag{display:inline-block;padding:3px 9px;border-radius:99px;font-size:12px;color:#fff}
-.PENDING_LEADER,.PENDING_MGR{background:var(--w)}.SENT_MT{background:var(--b)}.MT_DONE{background:var(--ok)}.REJECTED{background:var(--no)}
-.top{display:flex;justify-content:space-between;align-items:center}.sm{font-size:13px;color:var(--m)}
-.ph{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.ph img{width:92px;height:92px;object-fit:cover;border-radius:8px;border:1px solid #ddd}
-.ph .x{position:relative}.ph .x i{position:absolute;top:2px;right:2px;background:#000a;color:#fff;border-radius:50%;width:22px;height:22px;text-align:center;font-style:normal;line-height:22px}
-canvas{width:100%;border:1.5px dashed #9aa6b4;border-radius:8px;background:#fff;touch-action:none;display:block}
-#sk{height:220px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M20 0H0v20' fill='none' stroke='%23e8edf3'/%3E%3C/svg%3E")}
-.hide{display:none}.step{padding:8px 0;border-top:1px solid #eee;font-size:14px}
-.tabs{display:flex;gap:8px;margin-bottom:12px}.tabs button{flex:1;padding:10px;border:0;border-radius:10px;background:#dfe6ee;font:600 14px inherit}.tabs .on{background:var(--b);color:#fff}
-.kv{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid #f0f2f5;font-size:14px}.kv span{width:42%;color:var(--m)}.kv b{font-weight:500;flex:1;word-break:break-word}
-.auto{background:#eef3f9;border-radius:8px;padding:8px 12px;font-size:13px;color:var(--m)}
+label.l{display:block;font-size:13px;font-weight:500;color:var(--m);margin:14px 0 6px}label.l small{opacity:.75}
+input,select,textarea{width:100%;min-height:48px;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;font:inherit;font-size:16px;background:var(--in);color:var(--t);transition:border-color .15s,box-shadow .15s}
+input:focus,textarea:focus,select:focus{outline:0;border-color:var(--b);box-shadow:0 0 0 3px #2f80d82e}
+input:disabled{opacity:.65}textarea{min-height:96px;resize:vertical}
+input[type=file]{padding:10px;border-style:dashed}
+.chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.chip input{display:none}
+.chip span{display:flex;align-items:center;justify-content:center;text-align:center;min-height:46px;padding:8px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--in);font-size:15px;transition:.15s;cursor:pointer}
+.chip input:checked+span{background:var(--b);border-color:var(--b);color:#fff;font-weight:600}
+.chk{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:15px}.chk input{width:24px;min-height:24px;height:24px}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1 1 140px;min-width:0}
+button{font-family:inherit}
+button.p{width:100%;min-height:52px;padding:0 16px;border:0;border-radius:14px;background:var(--b);color:#fff;font:600 16px inherit;margin-top:14px;cursor:pointer;transition:transform .1s,opacity .15s}
+button.p:active{transform:scale(.98)}button.g{background:var(--ok)}button.r{background:var(--no)}button.o{background:var(--o)}button.s{background:var(--m)}button:disabled{opacity:.5}
+button.mini{border:0;background:var(--line);color:var(--t);border-radius:10px;min-height:38px;padding:0 14px;margin-top:8px;font-size:14px}
+.tag{display:inline-block;padding:4px 11px;border-radius:99px;font-size:12px;font-weight:600;color:#fff;white-space:nowrap}
+.PENDING_LEADER,.PENDING_MGR{background:var(--w)}.SENT_MT{background:var(--b)}.MT_DONE{background:var(--ok)}.REJECTED{background:var(--no)}.RETURNED{background:var(--o)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}.sm{font-size:13px;color:var(--m)}
+.item{cursor:pointer;border-left:5px solid var(--c,var(--line));transition:transform .12s}.item:active{transform:scale(.985)}
+.st-PENDING_LEADER,.st-PENDING_MGR{--c:var(--w)}.st-SENT_MT{--c:var(--b)}.st-MT_DONE{--c:var(--ok)}.st-REJECTED{--c:var(--no)}.st-RETURNED{--c:var(--o)}
+.ph{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.ph img{width:96px;height:96px;object-fit:cover;border-radius:12px;border:1px solid var(--line)}
+.ph .x{position:relative}.ph .x i{position:absolute;top:4px;right:4px;background:#000b;color:#fff;border-radius:50%;width:26px;height:26px;text-align:center;font-style:normal;line-height:26px}
+canvas{width:100%;border:1.5px dashed #9aa6b4;border-radius:12px;background:#fff;touch-action:none;display:block}
+#sk{height:240px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M20 0H0v20' fill='none' stroke='%23e8edf3'/%3E%3C/svg%3E")}
+.step{padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.kv{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:15px}.kv span{width:40%;flex:none;color:var(--m)}.kv b{font-weight:500;flex:1;word-break:break-word}
+.auto{background:#2f80d814;border-radius:12px;padding:10px 14px;font-size:13px;color:var(--m)}
+.bar{background:#dc3b3b17;border:1px solid #dc3b3b44}
+.pk{text-align:left;line-height:1.5;margin:0!important;padding:16px 18px;min-height:84px}.pk small{font-weight:400;opacity:.9}
+#vLogin{max-width:420px;margin:5vh auto 0}.brand{text-align:center;margin-bottom:6px}.brand i{font-size:44px;font-style:normal}.brand h2{margin:4px 0 0;font-size:22px}.brand p{margin:2px 0 6px;color:var(--m);font-size:13px}
+#list,#pick,#vNew,#vDetail{display:grid;gap:12px}#list>.card,#vNew>*,#vDetail>*{margin:0}#vDetail{align-items:start}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;gap:6px;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--card) 88%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+.tabs button{flex:1;min-height:48px;border:0;border-radius:14px;background:transparent;color:var(--m);font:600 13px inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.tabs button span{font-size:19px;line-height:1}.tabs .on{background:#2f80d824;color:var(--b)}
+.actions{display:flex;gap:10px;position:sticky;bottom:calc(var(--nav) + env(safe-area-inset-bottom));z-index:10;padding:10px;border-radius:16px;background:color-mix(in srgb,var(--bg) 85%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.actions .p{margin:0}.actions .s{flex:0 0 32%}.actions .p:not(.s){flex:1}
+#vDetail>button:first-child{width:auto;justify-self:start;padding:0 20px;margin:0}
+.sp{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--b);border-radius:50%;margin:30px auto;animation:sp .8s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+#toast{position:fixed;left:50%;bottom:calc(var(--nav) + 24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#16202cf2;color:#fff;padding:12px 18px;border-radius:14px;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:90vw;text-align:center;font-size:15px}#toast.on{opacity:1;transform:translate(-50%,0)}
+@media(min-width:768px){
+ main{max-width:1100px;padding:22px 28px 48px}
+ .tabs{position:static;max-width:420px;margin-bottom:16px;padding:5px;border:0;border-radius:16px;background:var(--card);box-shadow:var(--sh);-webkit-backdrop-filter:none;backdrop-filter:none}
+ .tabs button{flex-direction:row;gap:8px;font-size:15px;min-height:46px}.tabs .on{background:var(--b);color:#fff}
+ #list{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}#pick{grid-template-columns:1fr 1fr}
+ #sk{height:320px}.ph img{width:120px;height:120px}.actions{bottom:12px}.nm{max-width:none}#toast{bottom:28px}
+}
+@media(min-width:900px){
+ #vNew{grid-template-columns:1fr 1fr;align-items:start}.full{grid-column:1/-1}
+ #vDetail{grid-template-columns:1fr 1fr}#vDetail>button:first-child,#vDetail>.card:nth-child(2){grid-column:1/-1}
+}
 </style>
 </head>
 <body>
-<header><b>🔧 ใบขอสร้าง / ซ่อม</b><span id="who"></span></header>
+<header><b class="logo"><i>🔧</i> ใบขอสร้าง / ซ่อม</b><span id="who"></span></header>
 <main>
 
-<section id="vLogin" class="card hide">
+<section id="vLogin" class="hide"><div class="card"><div class="brand"><i>🔧</i><h2>ใบขอสร้าง / ซ่อม</h2><p>Request Design and Repair Job</p></div>
   <label class="l">รหัสพนักงาน</label><input id="lid" inputmode="numeric">
   <label class="l">PIN</label><input id="lpin" type="password" inputmode="numeric">
-  <button class="p" onclick="login()">เข้าสู่ระบบ</button><p id="lerr" class="sm"></p>
+  <button class="p" onclick="login()">เข้าสู่ระบบ</button><p id="lerr" class="sm"></p></div>
 </section>
 
 <section id="vApp" class="hide">
-  <div class="tabs"><button id="tList" class="on" onclick="tab('list')">รายการ</button><button id="tNew" onclick="tab('new')">+ สร้างใบใหม่</button></div>
+  <div class="tabs"><button id="tList" class="on" onclick="tab('list')"><span>📋</span>รายการ</button><button id="tNew" onclick="tab('new')"><span>＋</span>สร้างใบใหม่</button></div>
   <div id="list"></div>
 
+  <div id="pick" class="hide">
+    <p class="sm">เลือกประเภทใบงานที่ต้องการสร้าง</p>
+    <button class="p pk" style="margin-top:0" onclick="pickForm('A')">ฟอร์ม A — งานขอให้ผลิต<br><small>Design Job · ขอให้สร้าง/ผลิตชิ้นงาน เครื่องมือ อุปกรณ์</small></button>
+    <button class="p pk o" onclick="pickForm('B')">ฟอร์ม B — งานแจ้งซ่อมเครื่องจักร<br><small>Repair Job Machine · แจ้งเครื่องจักรผิดปกติ</small></button>
+  </div>
+
   <form id="vNew" class="hide" onsubmit="return submitNew(event)">
-    <div class="auto">เลขที่ MT, วันที่และเวลารับเอกสาร ระบบบันทึกให้อัตโนมัติ · ส่งแล้วจะไปที่หัวหน้า → MGR → แผนก MT</div>
-    <div class="card" style="margin-top:12px"><div class="sec">A. งานขอให้ผลิต <small>Design Job</small></div>
+    <div id="banner" class="card bar full hide"></div>
+    <div class="auto full">เลขที่ใบงาน วันที่และเวลา ระบบบันทึกให้อัตโนมัติ · ลำดับอนุมัติ: หัวหน้างาน → Production Manager → MT</div>
+
+    <fieldset class="card hide" id="fsA"><div class="sec">ฟอร์ม A · งานขอให้ผลิต <small>Design Job</small></div>
       <label class="l">เหตุผล / ประเภทงาน <small>Reason</small></label><div class="chips" id="c_reason"></div>
       <label class="l">ชื่องาน / รายละเอียดสั้นๆ <small>Name of Job</small></label><input id="f_ReasonDetail">
       <label class="l">ชื่อชิ้นส่วน <small>Part Name</small></label><input id="f_PartName" required>
-      <label class="l">ชื่อเครื่องจักร <small>Machine Name</small></label><input id="f_MachineName" list="dl" required><datalist id="dl"></datalist>
+      <label class="l">ชื่อเครื่องจักร <small>Machine Name</small></label><input id="f_MachineName" list="dl" required>
       <div class="row"><div><label class="l">จำนวน <small>Q'ty</small></label><input id="f_Qty" inputmode="numeric"></div>
       <div><label class="l">วันที่กำหนดเสร็จ <small>Due Date</small></label><input id="f_DueDate" type="date"></div></div>
       <label class="l">ความเร่งด่วน</label><div class="chips" id="c_urgent"></div>
-      <label class="l">วาดเค้าโครง / ร่างแบบ <small>Draft drawing</small></label>
+      <label class="l">วาดเค้าโครง / ร่างแบบ <small>Draft drawing (ถ้าแก้ไข: วาดใหม่เฉพาะเมื่อต้องการเปลี่ยน)</small></label>
       <canvas id="sk"></canvas><button type="button" class="mini" onclick="skPad.clear()">ล้างภาพวาด</button>
       <label class="l">รายละเอียดเพิ่มเติม <small>Detail</small></label><textarea id="f_Detail"></textarea>
-    </div>
-    <div class="card"><div class="sec">B. งานแจ้งซ่อมเครื่องจักร <small>Repair Job Machine</small></div>
+    </fieldset>
+
+    <fieldset class="card hide" id="fsB"><div class="sec">ฟอร์ม B · งานแจ้งซ่อมเครื่องจักร <small>Repair Job Machine</small></div>
       <div class="row"><div><label class="l">ผู้แจ้ง <small>Name</small></label><input id="f_name" disabled></div>
       <div><label class="l">แผนก <small>Dept</small></label><input id="f_dept" disabled></div></div>
       <label class="l">หัวหน้าหน่วยงาน <small>Leader Name</small></label><input id="f_LeaderName">
+      <label class="l">ชื่อเครื่องจักร <small>Machine Name</small></label><input id="f_MachineName2" list="dl" required>
       <div class="row"><div><label class="l">หมายเลขเครื่องจักร <small>Machine No</small></label><input id="f_MachineNo"></div>
       <div><label class="l">สายการผลิต <small>Line process</small></label><input id="f_Line"></div></div>
-      <label class="l">รายละเอียดความผิดปกติ <small>Detail of abnormal</small></label><textarea id="f_Abnormal"></textarea>
-      <label class="l">แนบรูปถ่าย (สูงสุด 6 รูป)</label>
-      <input type="file" accept="image/*" multiple onchange="addPhotos(this)"><div class="ph" id="prev"></div>
-    </div>
-    <button class="p" id="btnSend">ส่งใบขอสร้าง/ซ่อม</button>
+      <label class="l">รายละเอียดความผิดปกติ <small>Detail of abnormal</small></label><textarea id="f_Abnormal" required></textarea>
+    </fieldset>
+    <datalist id="dl"></datalist>
+
+    <div class="card"><label class="l" style="margin-top:0">แนบรูปถ่าย (สูงสุด 6 รูป)</label>
+      <input type="file" accept="image/*" multiple onchange="addPhotos(this)"><div class="ph" id="prev"></div></div>
+    <div class="actions full"><button type="button" class="p s" onclick="tab('list')">ยกเลิก</button><button class="p" id="btnSend">ส่งใบขอสร้าง/ซ่อม</button></div>
   </form>
 </section>
 
 <section id="vDetail" class="hide"></section>
 </main>
+<div id="toast"></div>
 
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbxgOTTT1eTtrVD7e9f7ce9K75xfwreKf7qehS9Yp1ypcXFkBZrrS3PKMuHGYOICAfa8MA/exec';
 const $ = id => document.getElementById(id);
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),3500)}
+window.alert=toast;
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const ST = {PENDING_LEADER:'รอหัวหน้าอนุมัติ',PENDING_MGR:'รอ MGR อนุมัติ',SENT_MT:'ส่งแผนก MT แล้ว',MT_DONE:'MT ดำเนินการเสร็จ',REJECTED:'ไม่อนุมัติ'};
+const ST = {PENDING_LEADER:'รอหัวหน้างานอนุมัติ',PENDING_MGR:'รอ Production Manager อนุมัติ',SENT_MT:'ส่งแผนก MT แล้ว',MT_DONE:'MT ดำเนินการเสร็จ',REJECTED:'ไม่อนุมัติ',RETURNED:'ตีกลับ รอแก้ไข'};
 const REASON = ['งานสร้าง','งานซ่อมเครื่องมือ/อุปกรณ์','งานอื่นๆ'], URGENT = ['ต้องเสร็จตามกำหนด','ปรับกำหนดการได้'];
 const METHOD = ['ซ่อมเองได้ – ทันที','ซ่อมเองได้ – รอสั่งซื้ออะไหล่/PR','ซ่อมเองไม่ได้ – สั่งซื้อใหม่','ซ่อมเองไม่ได้ – ติดต่อ Maker'];
 const CAUSE = ['Man Mistake','Machine Mistake','อื่นๆ'], RESULT = ['ยืนยันผลด้วย PPK','ไม่ต้องยืนยันผลด้วย PPK'];
-let U = JSON.parse(localStorage.getItem('mtu') || 'null'), rows = [], photos = [], skPad = null;
+let U = JSON.parse(localStorage.getItem('mtu') || 'null'), rows = [], photos = [], keep = [], skPad = null, sigPad = null, FORM = null, editRec = null;
 
 const chips = (n, a, req) => a.map(v => `<label class="chip"><input type="radio" name="${n}" value="${v}" ${req?'required':''}><span>${v}</span></label>`).join('');
 const rv = n => document.querySelector(`input[name=${n}]:checked`)?.value || '';
+const D = v => String(v || '').slice(0, 10);
 $('c_reason').innerHTML = chips('reason', REASON, 1); $('c_urgent').innerHTML = chips('urgent', URGENT, 1);
 
 async function call(a, d = {}) {
@@ -112,29 +168,48 @@ async function login() {
 }
 function logout(){localStorage.removeItem('mtu');U=null;$('who').innerHTML='';show('vLogin')}
 function start() {
-  $('who').innerHTML = esc(U.name) + ' <button onclick="logout()">ออก</button>';
+  $('who').innerHTML = '<span class="nm">' + esc(U.name) + '</span><button onclick="load()" aria-label="รีเฟรช">↻</button><button onclick="logout()">ออก</button>';
   $('tNew').classList.toggle('hide', U.role !== 'staff' && U.role !== 'leader');
-  $('f_name').value = U.name; $('f_dept').value = U.dept; $('f_LeaderName').value = U.leader || '';
   show('vApp'); tab('list'); load();
 }
 function tab(t) {
   $('tList').classList.toggle('on', t==='list'); $('tNew').classList.toggle('on', t==='new');
-  $('list').classList.toggle('hide', t!=='list'); $('vNew').classList.toggle('hide', t!=='new');
-  if (t==='new' && !skPad) skPad = mkPad($('sk'));
+  $('list').classList.toggle('hide', t!=='list'); $('pick').classList.toggle('hide', t!=='new'); $('vNew').classList.add('hide');
+  editRec = null;
 }
-const canAct = r => (U.role==='leader'&&r.Status==='PENDING_LEADER')||(U.role==='mgr'&&r.Status==='PENDING_MGR')||(U.role==='mt'&&r.Status==='SENT_MT');
+function pickForm(f, rec) {
+  FORM = f; editRec = rec || null; photos = []; keep = rec ? JSON.parse(rec.Photos || '[]') : [];
+  show('vApp'); $('tNew').classList.add('on'); $('tList').classList.remove('on');
+  $('list').classList.add('hide'); $('pick').classList.add('hide'); $('vNew').classList.remove('hide'); $('vNew').reset();
+  const A = f === 'A';
+  $('fsA').classList.toggle('hide', !A); $('fsA').disabled = !A; $('fsB').classList.toggle('hide', A); $('fsB').disabled = A;
+  $('f_name').value = U.name; $('f_dept').value = U.dept; $('f_LeaderName').value = U.leader || '';
+  if (A) { if (!skPad) skPad = mkPad($('sk')); skPad.clear(); }
+  if (rec) {
+    (A ? ['ReasonDetail','PartName','MachineName','Qty','DueDate','Detail'] : ['LeaderName','MachineNo','Line','Abnormal']).forEach(k => $('f_'+k).value = k==='DueDate' ? D(rec[k]) : (rec[k] || ''));
+    if (!A) $('f_MachineName2').value = rec.MachineName || '';
+    else [['reason','Reason'],['urgent','Urgent']].forEach(([n,k]) => document.querySelectorAll(`input[name=${n}]`).forEach(i => i.checked = i.value === rec[k]));
+  }
+  $('banner').classList.toggle('hide', !rec);
+  if (rec) $('banner').innerHTML = `⚠️ ใบ ${esc(rec.ID)} ถูกตีกลับโดย ${esc(rec.ReturnBy)}<br><b>${esc(rec.ReturnNote)}</b><br>แก้ไขให้ถูกต้องแล้วกดส่งใหม่ (ลำดับอนุมัติจะเริ่มใหม่)`;
+  $('btnSend').textContent = rec ? 'ส่งใบที่แก้ไขแล้ว' : 'ส่งใบขอสร้าง/ซ่อม';
+  drawPrev(); window.scrollTo(0, 0);
+}
+const mine = r => (U.role==='leader'&&r.Status==='PENDING_LEADER')||(U.role==='mgr'&&r.Status==='PENDING_MGR')||(U.role==='mt'&&r.Status==='SENT_MT')
+  ? '⏳ รอคุณอนุมัติ/ดำเนินการ' : (r.Status==='RETURNED' && r.RequesterID===U.id ? '⚠️ ถูกตีกลับ รอคุณแก้ไข' : '');
+const ttl = r => r.FormType === 'B' ? 'แจ้งซ่อม — ' + (r.MachineName || '') : (r.Reason || 'งานขอให้ผลิต') + ' — ' + (r.PartName || '');
 async function load() {
-  $('list').innerHTML = '<p class="sm">กำลังโหลด...</p>';
+  $('list').innerHTML = '<div class="sp"></div>';
   const r = await call('list');
   if (!r.ok) { $('list').innerHTML = '<p class="sm">'+esc(r.err)+'</p>'; return; }
-  rows = r.rows.sort((a,b) => canAct(b) - canAct(a));
+  rows = r.rows.sort((a,b) => !!mine(b) - !!mine(a));
   $('dl').innerHTML = [...new Set(rows.map(x => x.MachineName).filter(Boolean))].map(m => `<option value="${esc(m)}">`).join('');
   $('list').innerHTML = rows.length ? rows.map((r,i) => `
-    <div class="card" onclick="detail(${i})">
+    <div class="card item st-${r.Status}" onclick="detail(${i})">
       <div class="top"><b>${esc(r.ID)}</b><span class="tag ${r.Status}">${ST[r.Status]}</span></div>
-      <div>${esc(r.Reason)} — ${esc(r.PartName)}</div>
-      <div class="sm">${esc(r.MachineName)} ${esc(r.MachineNo)} · ${esc(r.RequesterName)} · ${esc(r.CreatedAt)}</div>
-      ${canAct(r)?'<div style="color:var(--w);font-weight:600;margin-top:6px">⏳ รอดำเนินการโดยคุณ</div>':''}
+      <div>${esc(ttl(r))}</div>
+      <div class="sm">${esc(r.MachineNo)} · ${esc(r.RequesterName)} · ${esc(r.CreatedAt)}</div>
+      ${mine(r)?'<div style="color:var(--w);font-weight:600;margin-top:6px">'+mine(r)+'</div>':''}
     </div>`).join('') : '<p class="sm">ยังไม่มีรายการ</p>';
 }
 
@@ -157,79 +232,92 @@ function shrink(file, max = 1280) {
     }; im.src = URL.createObjectURL(file);
   });
 }
-async function addPhotos(inp) { for (const f of inp.files) if (photos.length < 6) photos.push(await shrink(f)); inp.value=''; drawPrev(); }
-const drawPrev = () => $('prev').innerHTML = photos.map((p,i) => `<div class="x"><img src="${p}"><i onclick="photos.splice(${i},1);drawPrev()">×</i></div>`).join('');
+async function addPhotos(inp) { for (const f of inp.files) if (keep.length + photos.length < 6) photos.push(await shrink(f)); inp.value=''; drawPrev(); }
+const drawPrev = () => $('prev').innerHTML =
+  keep.map((u,i) => `<div class="x"><img src="${u}"><i onclick="keep.splice(${i},1);drawPrev()">×</i></div>`).join('') +
+  photos.map((p,i) => `<div class="x"><img src="${p}"><i onclick="photos.splice(${i},1);drawPrev()">×</i></div>`).join('');
 
 async function submitNew(e) {
-  e.preventDefault(); const b = $('btnSend'); b.disabled = true; b.textContent = 'กำลังส่ง...';
-  const g = k => $('f_'+k).value.trim(), data = {Reason:rv('reason'), Urgent:rv('urgent')};
-  ['ReasonDetail','PartName','MachineName','Qty','DueDate','Line','LeaderName','MachineNo','Abnormal','Detail'].forEach(k => data[k] = g(k));
-  const r = await call('create', {photos, sketch:skPad.url(), data});
-  b.disabled = false; b.textContent = 'ส่งใบขอสร้าง/ซ่อม';
-  if (!r.ok) return alert(r.err);
-  alert('ส่งแล้ว เลขที่ ' + r.id); e.target.reset(); photos = []; drawPrev(); skPad.clear(); $('f_name').value = U.name; $('f_dept').value = U.dept; $('f_LeaderName').value = U.leader || '';
-  tab('list'); load();
+  e.preventDefault(); const b = $('btnSend'), A = FORM === 'A'; b.disabled = true; b.textContent = 'กำลังส่ง...';
+  const g = k => $('f_'+k).value.trim(), data = {};
+  (A ? ['ReasonDetail','PartName','Qty','DueDate','Detail'] : ['LeaderName','MachineNo','Line','Abnormal']).forEach(k => data[k] = g(k));
+  data.MachineName = g(A ? 'MachineName' : 'MachineName2');
+  if (A) { data.Reason = rv('reason'); data.Urgent = rv('urgent'); }
+  const sketch = A && skPad ? skPad.url() : '';
+  const r = editRec ? await call('resubmit', {rid:editRec.ID, data, sketch, photos, keep}) : await call('create', {form:FORM, data, sketch, photos});
+  b.disabled = false;
+  if (!r.ok) { b.textContent = editRec ? 'ส่งใบที่แก้ไขแล้ว' : 'ส่งใบขอสร้าง/ซ่อม'; return alert(r.err); }
+  alert(editRec ? 'ส่งใบที่แก้ไขแล้ว' : 'ส่งแล้ว เลขที่ ' + r.id); tab('list'); load();
 }
 
 /* ---------- รายละเอียดใบงาน ---------- */
 const kv = (l, v) => v ? `<div class="kv"><span>${l}</span><b>${esc(v)}</b></div>` : '';
-const D = v => String(v || '').slice(0, 10);
 const stepHtml = (n, by, at, sig, note) => by
   ? `<div class="step"><b>${n}:</b> ${esc(by)} <span class="sm">${esc(at)}</span>${note?'<div class="sm">'+esc(note)+'</div>':''}${sig?`<br><img src="${sig}" style="height:56px">`:''}</div>`
   : `<div class="step sm">${n}: —</div>`;
 function mtForm(r) {
-  const today = new Date().toISOString().slice(0,10), n = (id, l) => `<div><label class="l">${l}</label><input id="${id}" type="number" step="0.1" oninput="sumH()"></div>`;
-  return `<div class="card"><div class="sec">ส่วนพิจารณาโดย Leader MT <small>(ช่างกรอกตอนปิดงาน)</small></div>
-  <label class="l">วิธีจัดการ <small>Method</small></label><div class="chips">${chips('method', METHOD)}</div>
-  <label class="l">สาเหตุความผิดปกติ <small>Cause</small></label><div class="chips">${chips('cause', CAUSE)}</div>
-  <label class="l">รายละเอียดการซ่อม <small>Repair detail</small></label><textarea id="m_RepairDetail"></textarea>
-  <label class="l">ผลการซ่อม <small>Result</small></label><div class="chips">${chips('result', RESULT)}</div>
+  const B = r.FormType === 'B', today = new Date().toISOString().slice(0,10),
+    n = (id, l) => `<div><label class="l">${l}</label><input id="${id}" type="number" step="0.1" oninput="sumH()"></div>`;
+  return `<div class="card"><div class="sec">${B ? 'ส่วนพิจารณาโดย Leader MT' : 'ผลการดำเนินงานของ MT'} <small>(กรอกตอนปิดงาน)</small></div>
+  ${B ? `<label class="l">วิธีจัดการ <small>Method</small></label><div class="chips">${chips('method', METHOD)}</div>
+  <label class="l">สาเหตุความผิดปกติ <small>Cause</small></label><div class="chips">${chips('cause', CAUSE)}</div>` : ''}
+  <label class="l">${B ? 'รายละเอียดการซ่อม <small>Repair detail</small>' : 'รายละเอียดการผลิต / หมายเหตุ'}</label><textarea id="m_RepairDetail"></textarea>
+  ${B ? `<label class="l">ผลการซ่อม <small>Result</small></label><div class="chips">${chips('result', RESULT)}</div>
   <div class="row"><div><label class="l">ตั้งแต่วันที่</label><input id="m_Since" type="date"></div><div><label class="l">ถึงวันที่</label><input id="m_Until" type="date" value="${today}"></div></div>
-  <div class="row">${n('m_WaitHrs','เวลารอซ่อม (ชม.)')}${n('m_RepairHrs','เวลาซ่อมจริง (ชม.)')}<div><label class="l">รวม (ชม.)</label><input id="m_TotalHrs" disabled></div></div>
-  <div class="row"><div><label class="l">สร้าง/ซ่อมโดย</label><input id="m_RepairBy" value="${esc(U.name)}"></div><div><label class="l">วันที่งานเสร็จ</label><input id="m_FinishDate" type="date" value="${today}"></div></div>
-  <label style="display:flex;gap:8px;align-items:center;margin-top:14px"><input type="checkbox" id="m_FourM" style="width:20px;height:20px"> ลงบันทึก 4M เรียบร้อย</label>
-  <button class="p g" onclick="mtDone('${r.ID}')">บันทึกและปิดงาน</button></div>`;
+  <div class="row">${n('m_WaitHrs','เวลารอซ่อม (ชม.)')}${n('m_RepairHrs','เวลาซ่อมจริง (ชม.)')}<div><label class="l">รวม (ชม.)</label><input id="m_TotalHrs" disabled></div></div>` : ''}
+  <div class="row"><div><label class="l">${B ? 'สร้าง/ซ่อมโดย' : 'รับผิดชอบผลิตโดย'}</label><input id="m_RepairBy" value="${esc(U.name)}"></div><div><label class="l">วันที่งานเสร็จ</label><input id="m_FinishDate" type="date" value="${today}"></div></div>
+  ${B ? '<label class="chk"><input type="checkbox" id="m_FourM"><span>ลงบันทึก 4M เรียบร้อย</span></label>' : ''}
+  <label class="l">หมายเหตุ / เหตุผลที่ตีกลับ</label><textarea id="note"></textarea>
+  <div class="row"><button class="p o" onclick="act('${r.ID}','return')">ตีกลับแก้ไข</button><button class="p g" onclick="closeJob('${r.ID}')">บันทึกและปิดงาน</button></div></div>`;
 }
 const sumH = () => $('m_TotalHrs').value = Math.round(((+$('m_WaitHrs').value||0) + (+$('m_RepairHrs').value||0)) * 100) / 100;
 
 function detail(i) {
-  const r = rows[i]; let ph = []; try { ph = JSON.parse(r.Photos || '[]') } catch(e) {}
-  const act = canAct(r), mt = U.role === 'mt';
+  const r = rows[i]; let ph = [], rl = []; try { ph = JSON.parse(r.Photos || '[]'); rl = JSON.parse(r.Returns || '[]'); } catch(e) {}
+  const my = r.Status === 'RETURNED' && r.RequesterID === U.id, st = mine(r), isMT = U.role === 'mt', A = r.FormType !== 'B';
+  const act_ = st.startsWith('⏳');
   $('vDetail').innerHTML = `<button class="p s" style="margin:0 0 12px" onclick="show('vApp')">← กลับ</button>
   <div class="card"><div class="top"><b>MT No: ${esc(r.ID)}</b><span class="tag ${r.Status}">${ST[r.Status]}</span></div>
-    <div class="sm">วันที่รับเอกสาร: ${esc(r.CreatedAt)}</div></div>
-  <div class="card"><div class="sec">A. งานขอให้ผลิต <small>Design Job</small></div>
+    <div class="sm">${A ? 'ฟอร์ม A · งานขอให้ผลิต' : 'ฟอร์ม B · งานแจ้งซ่อมเครื่องจักร'} · วันที่รับเอกสาร ${esc(r.CreatedAt)}</div></div>
+  ${r.Status === 'RETURNED' ? `<div class="card bar"><b>ถูกตีกลับโดย ${esc(r.ReturnBy)}</b> <span class="sm">${esc(r.ReturnAt)}</span><br>${esc(r.ReturnNote)}
+    ${my ? `<button class="p o" onclick="pickForm('${r.FormType}', rows[${i}])">✏️ แก้ไขและส่งใหม่</button>` : ''}</div>` : ''}
+  ${A ? `<div class="card"><div class="sec">A. งานขอให้ผลิต <small>Design Job</small></div>
     ${kv('เหตุผล', r.Reason)}${kv('ชื่องาน', r.ReasonDetail)}${kv('ชื่อชิ้นส่วน', r.PartName)}${kv('ชื่อเครื่องจักร', r.MachineName)}
-    ${kv('จำนวน', r.Qty)}${kv('วันที่กำหนดเสร็จ', D(r.DueDate))}${kv('ความเร่งด่วน', r.Urgent)}${kv('รายละเอียด', r.Detail)}
-    ${r.Sketch ? `<div class="sm" style="margin-top:8px">ร่างแบบ</div><a href="${r.Sketch}" target="_blank"><img src="${r.Sketch}" style="width:100%;border:1px solid #ddd;border-radius:8px;background:#fff"></a>` : ''}</div>
-  <div class="card"><div class="sec">B. งานแจ้งซ่อมเครื่องจักร <small>Repair Job Machine</small></div>
-    ${kv('แผนก', r.Dept)}${kv('ผู้แจ้ง', r.RequesterName)}${kv('หัวหน้าหน่วยงาน', r.LeaderName)}${kv('หมายเลขเครื่อง', r.MachineNo)}${kv('สายการผลิต', r.Line)}${kv('ความผิดปกติ', r.Abnormal)}
-    <div class="ph">${ph.map(u => `<a href="${u}" target="_blank"><img src="${u}"></a>`).join('')}</div></div>
-  ${r.Status === 'MT_DONE' ? `<div class="card"><div class="sec">ส่วนพิจารณาโดย Leader MT</div>
-    ${kv('วิธีจัดการ', r.Method)}${kv('สาเหตุ', r.Cause)}${kv('รายละเอียดการซ่อม', r.RepairDetail)}${kv('ผลการซ่อม', r.Result)}
-    ${kv('ระยะเวลา', D(r.Since) + ' ถึง ' + D(r.Until))}${kv('รอซ่อม (ชม.)', r.WaitHrs)}${kv('ซ่อมจริง (ชม.)', r.RepairHrs)}${kv('รวม (ชม.)', r.TotalHrs)}
-    ${kv('ซ่อมโดย', r.RepairBy)}${kv('วันที่เสร็จ', D(r.FinishDate))}${kv('บันทึก 4M', r.FourM ? 'เรียบร้อย' : '')}</div>` : ''}
-  <div class="card"><b>การอนุมัติ</b>
-    ${stepHtml('1) หัวหน้า', r.LeaderBy, r.LeaderAt, r.LeaderSig, r.LeaderNote)}${stepHtml('2) MGR', r.MgrBy, r.MgrAt, r.MgrSig, r.MgrNote)}
-    ${stepHtml('3) แผนก MT', r.MTBy, r.MTAt, '', '')}</div>
-  ${act && mt ? mtForm(r) : ''}
-  ${act && !mt ? `<div class="card"><label class="l">หมายเหตุ</label><textarea id="note"></textarea>
-    <label class="l">ลายเซ็น</label><canvas id="sig" style="height:150px"></canvas><button type="button" class="mini" onclick="sigPad.clear()">ล้างลายเซ็น</button>
-    <div class="row"><button class="p r" onclick="decide('${r.ID}',false)">ไม่อนุมัติ</button><button class="p g" onclick="decide('${r.ID}',true)">อนุมัติ</button></div></div>` : ''}`;
-  show('vDetail'); window.scrollTo(0, 0); if (act && !mt) sigPad = mkPad($('sig'));
+    ${kv('จำนวน', r.Qty)}${kv('วันที่กำหนดเสร็จ', D(r.DueDate))}${kv('ความเร่งด่วน', r.Urgent)}${kv('รายละเอียด', r.Detail)}${kv('แผนก', r.Dept)}${kv('ผู้ขอ', r.RequesterName)}
+    ${r.Sketch ? `<div class="sm" style="margin-top:8px">ร่างแบบ</div><a href="${r.Sketch}" target="_blank"><img src="${r.Sketch}" style="width:100%;border:1px solid #ddd;border-radius:8px;background:#fff"></a>` : ''}</div>`
+  : `<div class="card"><div class="sec">B. งานแจ้งซ่อมเครื่องจักร <small>Repair Job Machine</small></div>
+    ${kv('แผนก', r.Dept)}${kv('ผู้แจ้ง', r.RequesterName)}${kv('หัวหน้าหน่วยงาน', r.LeaderName)}${kv('ชื่อเครื่องจักร', r.MachineName)}${kv('หมายเลขเครื่อง', r.MachineNo)}${kv('สายการผลิต', r.Line)}${kv('ความผิดปกติ', r.Abnormal)}</div>`}
+  ${ph.length ? `<div class="card"><b>รูปถ่าย</b><div class="ph">${ph.map(u => `<a href="${u}" target="_blank"><img src="${u}"></a>`).join('')}</div></div>` : ''}
+  ${r.Status === 'MT_DONE' ? `<div class="card"><div class="sec">ผลการดำเนินงานของ MT</div>
+    ${kv('วิธีจัดการ', r.Method)}${kv('สาเหตุ', r.Cause)}${kv('รายละเอียด', r.RepairDetail)}${kv('ผลการซ่อม', r.Result)}
+    ${r.Since ? kv('ระยะเวลา', D(r.Since) + ' ถึง ' + D(r.Until)) : ''}${kv('รอซ่อม (ชม.)', r.WaitHrs)}${kv('ซ่อมจริง (ชม.)', r.RepairHrs)}${kv('รวม (ชม.)', r.TotalHrs)}
+    ${kv('ดำเนินการโดย', r.RepairBy)}${kv('วันที่เสร็จ', D(r.FinishDate))}${kv('บันทึก 4M', r.FourM ? 'เรียบร้อย' : '')}</div>` : ''}
+  <div class="card"><b>ลำดับการอนุมัติ</b>
+    ${stepHtml('0) ผู้สร้างใบงาน', r.RequesterName, r.CreatedAt, '', '')}
+    ${stepHtml('1) หัวหน้างาน', r.LeaderBy, r.LeaderAt, r.LeaderSig, r.LeaderNote)}${stepHtml('2) Production Manager', r.MgrBy, r.MgrAt, r.MgrSig, r.MgrNote)}
+    ${stepHtml('3) แผนก MT', r.MTBy, r.MTAt, '', '')}
+    ${rl.length ? '<div class="step"><b>ประวัติการตีกลับ</b>' + rl.map(x => `<div class="sm">• ${esc(x.at)} ${esc(x.by)}: ${esc(x.note)}</div>`).join('') + '</div>' : ''}</div>
+  ${act_ && isMT ? mtForm(r) : ''}
+  ${act_ && !isMT ? `<div class="card"><label class="l">หมายเหตุ / สิ่งที่ต้องแก้ไข</label><textarea id="note"></textarea>
+    <label class="l">ลายเซ็น (ใช้เมื่ออนุมัติ)</label><canvas id="sig" style="height:150px"></canvas><button type="button" class="mini" onclick="sigPad.clear()">ล้างลายเซ็น</button>
+    <button class="p o" onclick="act('${r.ID}','return')">ตีกลับให้ผู้สร้างแก้ไข</button>
+    <div class="row"><button class="p r" onclick="act('${r.ID}','reject')">ไม่อนุมัติ</button><button class="p g" onclick="act('${r.ID}','approve')">อนุมัติ</button></div></div>` : ''}`;
+  show('vDetail'); window.scrollTo(0, 0); sigPad = act_ && !isMT ? mkPad($('sig')) : null;
 }
-let sigPad;
-async function decide(rid, approve) {
-  if (approve && !sigPad.has()) return alert('กรุณาเซ็นชื่อก่อนอนุมัติ');
-  if (!approve && !$('note').value.trim()) return alert('กรุณาใส่เหตุผลที่ไม่อนุมัติ');
-  const r = await call('decide', {rid, approve, note:$('note').value, sig:sigPad.url()});
+async function act(rid, mode) {
+  const note = $('note').value.trim();
+  if (mode === 'return' && !note) return alert('กรุณาระบุสิ่งที่ต้องแก้ไข');
+  if (mode === 'reject' && !note) return alert('กรุณาใส่เหตุผลที่ไม่อนุมัติ');
+  if (mode === 'approve' && (!sigPad || !sigPad.has())) return alert('กรุณาเซ็นชื่อก่อนอนุมัติ');
+  if (mode === 'return' && !confirm('ตีกลับใบนี้ให้ผู้สร้างแก้ไข?')) return;
+  const r = await call('act', {rid, mode, note, sig: sigPad ? sigPad.url() : ''});
   if (!r.ok) return alert(r.err); show('vApp'); load();
 }
-async function mtDone(rid) {
-  const d = {Method:rv('method'), Cause:rv('cause'), Result:rv('result'), FourM:$('m_FourM').checked ? 'Y' : ''};
-  ['RepairDetail','Since','Until','WaitHrs','RepairHrs','TotalHrs','RepairBy','FinishDate'].forEach(k => d[k] = $('m_'+k).value);
-  if (!d.Method || !d.RepairDetail.trim()) return alert('กรุณาเลือกวิธีจัดการ และกรอกรายละเอียดการซ่อม');
-  const r = await call('mt', {rid, d});
+async function closeJob(rid) {
+  const v = id => $(id) ? $(id).value : '', d = {Method:rv('method'), Cause:rv('cause'), Result:rv('result'), FourM:$('m_FourM')?.checked ? 'Y' : ''};
+  ['RepairDetail','Since','Until','WaitHrs','RepairHrs','TotalHrs','RepairBy','FinishDate'].forEach(k => d[k] = v('m_'+k));
+  if (($('m_Since') && !d.Method) || !d.RepairDetail.trim()) return alert('กรุณาเลือกวิธีจัดการ และกรอกรายละเอียด');
+  const r = await call('act', {rid, mode:'close', d});
   if (!r.ok) return alert(r.err); show('vApp'); load();
 }
 
