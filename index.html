@@ -78,31 +78,43 @@ canvas{width:100%;border:1.5px dashed #9aa6b4;border-radius:12px;background:#fff
  #vNew{grid-template-columns:1fr 1fr;align-items:start}.full{grid-column:1/-1}
  #vDetail{grid-template-columns:1fr 1fr}#vDetail>button:first-child,#vDetail>.card:nth-child(2){grid-column:1/-1}
 }
+#done{text-align:center}#done .big{display:block;font-size:34px;font-weight:700;margin:4px 0 10px;color:var(--b)}
 </style>
 </head>
 <body>
 <header><b class="logo"><i>🔧</i> ใบขอสร้าง / ซ่อม</b><span id="who"></span></header>
 <main>
 
-<section id="vLogin" class="hide"><div class="card"><div class="brand"><i>🔧</i><h2>ใบขอสร้าง / ซ่อม</h2><p>Request Design and Repair Job</p></div>
+<section id="vLogin" class="hide"><div class="card">
+  <div class="brand"><i>🔑</i><h2>เข้าสู่ระบบผู้อนุมัติ</h2><p>สำหรับหัวหน้างาน · Production Manager · แผนก MT</p></div>
   <label class="l">รหัสพนักงาน</label><input id="lid" inputmode="numeric">
   <label class="l">PIN</label><input id="lpin" type="password" inputmode="numeric">
-  <button class="p" onclick="login()">เข้าสู่ระบบ</button><p id="lerr" class="sm"></p></div>
-</section>
+  <button class="p" onclick="login()">เข้าสู่ระบบ</button><p id="lerr" class="sm"></p>
+  <button type="button" class="mini" onclick="show('vApp')">← กลับไปสร้างใบงาน</button>
+</div></section>
 
-<section id="vApp" class="hide">
-  <div class="tabs"><button id="tList" class="on" onclick="tab('list')"><span>📋</span>รายการ</button><button id="tNew" onclick="tab('new')"><span>＋</span>สร้างใบใหม่</button></div>
-  <div id="list"></div>
+<section id="vApp">
+  <div class="tabs">
+    <button id="tList" class="hide" onclick="tab('list')"><span>📋</span>รายการ</button>
+    <button id="tNew" class="on" onclick="tab('new')"><span>＋</span>สร้างใบใหม่</button>
+    <button id="tTrack" onclick="tab('track')"><span>🔎</span>ติดตามใบงาน</button>
+  </div>
+  <div id="list" class="hide"></div>
 
-  <div id="pick" class="hide">
-    <p class="sm">เลือกประเภทใบงานที่ต้องการสร้าง</p>
-    <button class="p pk" style="margin-top:0" onclick="pickForm('A')">ฟอร์ม A — งานขอให้ผลิต<br><small>Design Job · ขอให้สร้าง/ผลิตชิ้นงาน เครื่องมือ อุปกรณ์</small></button>
+  <div id="pick">
+    <p class="sm">เลือกประเภทใบงานที่ต้องการสร้าง (ไม่ต้องล็อกอิน)</p>
+    <button class="p pk" onclick="pickForm('A')">ฟอร์ม A — งานขอให้ผลิต<br><small>Design Job · ขอให้สร้าง/ผลิตชิ้นงาน เครื่องมือ อุปกรณ์</small></button>
     <button class="p pk o" onclick="pickForm('B')">ฟอร์ม B — งานแจ้งซ่อมเครื่องจักร<br><small>Repair Job Machine · แจ้งเครื่องจักรผิดปกติ</small></button>
   </div>
 
   <form id="vNew" class="hide" onsubmit="return submitNew(event)">
     <div id="banner" class="card bar full hide"></div>
-    <div class="auto full">เลขที่ใบงาน วันที่และเวลา ระบบบันทึกให้อัตโนมัติ · ลำดับอนุมัติ: หัวหน้างาน → Production Manager → MT</div>
+    <div class="auto full">เลขที่ใบงาน วันที่และเวลา ระบบบันทึกให้อัตโนมัติ · ลำดับ: หัวหน้างานกดรับทราบ → Production Manager อนุมัติ → แผนก MT</div>
+
+    <fieldset class="card full" id="fsWho"><div class="sec">ผู้กรอกใบงาน</div>
+      <div class="row"><div><label class="l" style="margin-top:0">ชื่อผู้กรอก <small>Requester</small></label><input id="f_name" required autocomplete="name"></div>
+      <div><label class="l" style="margin-top:0">แผนก <small>Dept</small></label><select id="f_dept" required></select></div></div>
+    </fieldset>
 
     <fieldset class="card hide" id="fsA"><div class="sec">ฟอร์ม A · งานขอให้ผลิต <small>Design Job</small></div>
       <label class="l">เหตุผล / ประเภทงาน <small>Reason</small></label><div class="chips" id="c_reason"></div>
@@ -118,10 +130,7 @@ canvas{width:100%;border:1.5px dashed #9aa6b4;border-radius:12px;background:#fff
     </fieldset>
 
     <fieldset class="card hide" id="fsB"><div class="sec">ฟอร์ม B · งานแจ้งซ่อมเครื่องจักร <small>Repair Job Machine</small></div>
-      <div class="row"><div><label class="l">ผู้แจ้ง <small>Name</small></label><input id="f_name" disabled></div>
-      <div><label class="l">แผนก <small>Dept</small></label><input id="f_dept" disabled></div></div>
-      <label class="l">หัวหน้าหน่วยงาน <small>Leader Name</small></label><input id="f_LeaderName">
-      <label class="l">ชื่อเครื่องจักร <small>Machine Name</small></label><input id="f_MachineName2" list="dl" required>
+      <label class="l" style="margin-top:0">ชื่อเครื่องจักร <small>Machine Name</small></label><input id="f_MachineName2" list="dl" required>
       <div class="row"><div><label class="l">หมายเลขเครื่องจักร <small>Machine No</small></label><input id="f_MachineNo"></div>
       <div><label class="l">สายการผลิต <small>Line process</small></label><input id="f_Line"></div></div>
       <label class="l">รายละเอียดความผิดปกติ <small>Detail of abnormal</small></label><textarea id="f_Abnormal" required></textarea>
@@ -130,8 +139,16 @@ canvas{width:100%;border:1.5px dashed #9aa6b4;border-radius:12px;background:#fff
 
     <div class="card"><label class="l" style="margin-top:0">แนบรูปถ่าย (สูงสุด 6 รูป)</label>
       <input type="file" accept="image/*" multiple onchange="addPhotos(this)"><div class="ph" id="prev"></div></div>
-    <div class="actions full"><button type="button" class="p s" onclick="tab('list')">ยกเลิก</button><button class="p" id="btnSend">ส่งใบขอสร้าง/ซ่อม</button></div>
+    <div class="actions full"><button type="button" class="p s" onclick="tab('new')">ยกเลิก</button><button class="p" id="btnSend">ส่งใบขอสร้าง/ซ่อม</button></div>
   </form>
+
+  <div id="done" class="card hide"></div>
+
+  <div id="track" class="hide"><form class="card" onsubmit="return trackGo(event)"><div class="sec">ติดตามใบงาน / แก้ไขใบที่ถูกตีกลับ</div>
+    <label class="l" style="margin-top:0">เลขที่ใบงาน <small>MT No</small></label><input id="t_no" placeholder="เช่น A000/2026" required autocapitalize="characters">
+    <label class="l">ชื่อผู้กรอกใบงาน</label><input id="t_name" required>
+    <button class="p">ค้นหา</button>
+    <label class="l">ใบงานล่าสุดบนเครื่องนี้</label><div id="recent" class="ph"></div></form></div>
 </section>
 
 <section id="vDetail" class="hide"></section>
@@ -142,13 +159,16 @@ canvas{width:100%;border:1.5px dashed #9aa6b4;border-radius:12px;background:#fff
 const API = 'https://script.google.com/macros/s/AKfycbxgOTTT1eTtrVD7e9f7ce9K75xfwreKf7qehS9Yp1ypcXFkBZrrS3PKMuHGYOICAfa8MA/exec';
 const $ = id => document.getElementById(id);
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),3500)}
-window.alert=toast;
+window.alert = toast;
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const ST = {PENDING_LEADER:'รอหัวหน้างานอนุมัติ',PENDING_MGR:'รอ Production Manager อนุมัติ',SENT_MT:'ส่งแผนก MT แล้ว',MT_DONE:'MT ดำเนินการเสร็จ',REJECTED:'ไม่อนุมัติ',RETURNED:'ตีกลับ รอแก้ไข'};
+const ST = {PENDING_LEADER:'รอหัวหน้างานรับทราบ',PENDING_MGR:'รอ Production Manager อนุมัติ',SENT_MT:'ส่งแผนก MT แล้ว',MT_DONE:'MT ดำเนินการเสร็จ',REJECTED:'ไม่อนุมัติ',RETURNED:'ตีกลับ รอแก้ไข'};
 const REASON = ['งานสร้าง','งานซ่อมเครื่องมือ/อุปกรณ์','งานอื่นๆ'], URGENT = ['ต้องเสร็จตามกำหนด','ปรับกำหนดการได้'];
 const METHOD = ['ซ่อมเองได้ – ทันที','ซ่อมเองได้ – รอสั่งซื้ออะไหล่/PR','ซ่อมเองไม่ได้ – สั่งซื้อใหม่','ซ่อมเองไม่ได้ – ติดต่อ Maker'];
 const CAUSE = ['Man Mistake','Machine Mistake','อื่นๆ'], RESULT = ['ยืนยันผลด้วย PPK','ไม่ต้องยืนยันผลด้วย PPK'];
-let U = JSON.parse(localStorage.getItem('mtu') || 'null'), rows = [], photos = [], keep = [], skPad = null, sigPad = null, FORM = null, editRec = null;
+let U = JSON.parse(localStorage.getItem('mtu') || 'null'), rows = [], photos = [], keep = [], skPad = null, sigPad = null, FORM = null, editRec = null, DEPTS = [];
+const role = () => U ? U.role : '';
+const recent = () => { try { return JSON.parse(localStorage.getItem('mtmine') || '[]') } catch(e) { return [] } };
+const addRecent = (no, name) => localStorage.setItem('mtmine', JSON.stringify([{no, name}, ...recent().filter(x => x.no !== no)].slice(0, 10)));
 
 const chips = (n, a, req) => a.map(v => `<label class="chip"><input type="radio" name="${n}" value="${v}" ${req?'required':''}><span>${v}</span></label>`).join('');
 const rv = n => document.querySelector(`input[name=${n}]:checked`)?.value || '';
@@ -160,45 +180,56 @@ async function call(a, d = {}) {
   catch (e) { return {ok:false, err:'เชื่อมต่อไม่ได้ (ออฟไลน์?)'}; }
 }
 const show = v => ['vLogin','vApp','vDetail'].forEach(x => $(x).classList.toggle('hide', x !== v));
+async function loadDepts() {
+  const r = await call('meta');
+  if (r.ok) { DEPTS = r.depts; $('f_dept').innerHTML = '<option value="">— เลือกแผนก —</option>' + DEPTS.map(d => `<option>${esc(d)}</option>`).join(''); }
+}
+function hdr() {
+  $('who').innerHTML = U ? '<span class="nm">' + esc(U.name) + '</span><button onclick="load()" aria-label="รีเฟรช">↻</button><button onclick="logout()">ออก</button>'
+    : `<button onclick="show('vLogin')">🔑 ผู้อนุมัติ</button>`;
+}
 async function login() {
   U = {id:$('lid').value.trim(), pin:$('lpin').value.trim()};
   const r = await call('login');
   if (!r.ok) { U = null; $('lerr').textContent = r.err; return; }
   U = r.user; localStorage.setItem('mtu', JSON.stringify(U)); start();
 }
-function logout(){localStorage.removeItem('mtu');U=null;$('who').innerHTML='';show('vLogin')}
-function start() {
-  $('who').innerHTML = '<span class="nm">' + esc(U.name) + '</span><button onclick="load()" aria-label="รีเฟรช">↻</button><button onclick="logout()">ออก</button>';
-  $('tNew').classList.toggle('hide', U.role !== 'staff' && U.role !== 'leader');
-  show('vApp'); tab('list'); load();
+function logout(){localStorage.removeItem('mtu');U=null;hdr();$('tList').classList.add('hide');show('vApp');tab('new')}
+function start() { hdr(); $('tList').classList.remove('hide'); show('vApp'); tab('list'); load(); }
+
+function panes(t) {
+  const m = {list:'list', new:'pick', form:'vNew', done:'done', track:'track'};
+  Object.values(m).forEach(x => $(x).classList.toggle('hide', x !== m[t]));
+  $('tList').classList.toggle('on', t==='list'); $('tNew').classList.toggle('on', ['new','form','done'].includes(t)); $('tTrack').classList.toggle('on', t==='track');
+  if (t === 'track') renderRecent();
+  window.scrollTo(0, 0);
 }
-function tab(t) {
-  $('tList').classList.toggle('on', t==='list'); $('tNew').classList.toggle('on', t==='new');
-  $('list').classList.toggle('hide', t!=='list'); $('pick').classList.toggle('hide', t!=='new'); $('vNew').classList.add('hide');
-  editRec = null;
-}
-function pickForm(f, rec) {
+const tab = t => { editRec = null; panes(t); };
+
+async function pickForm(f, rec) {
+  if (!DEPTS.length) await loadDepts();
   FORM = f; editRec = rec || null; photos = []; keep = rec ? JSON.parse(rec.Photos || '[]') : [];
-  show('vApp'); $('tNew').classList.add('on'); $('tList').classList.remove('on');
-  $('list').classList.add('hide'); $('pick').classList.add('hide'); $('vNew').classList.remove('hide'); $('vNew').reset();
+  show('vApp'); panes('form'); $('vNew').reset();
   const A = f === 'A';
   $('fsA').classList.toggle('hide', !A); $('fsA').disabled = !A; $('fsB').classList.toggle('hide', A); $('fsB').disabled = A;
-  $('f_name').value = U.name; $('f_dept').value = U.dept; $('f_LeaderName').value = U.leader || '';
+  let w = {}; try { w = JSON.parse(localStorage.getItem('mtwho') || '{}') } catch(e) {}
+  $('f_name').value = rec ? rec.RequesterName : (w.name || ''); $('f_name').readOnly = !!rec; $('f_dept').value = rec ? rec.Dept : (w.dept || '');
   if (A) { if (!skPad) skPad = mkPad($('sk')); skPad.clear(); }
   if (rec) {
-    (A ? ['ReasonDetail','PartName','MachineName','Qty','DueDate','Detail'] : ['LeaderName','MachineNo','Line','Abnormal']).forEach(k => $('f_'+k).value = k==='DueDate' ? D(rec[k]) : (rec[k] || ''));
+    (A ? ['ReasonDetail','PartName','MachineName','Qty','DueDate','Detail'] : ['MachineNo','Line','Abnormal']).forEach(k => $('f_'+k).value = k==='DueDate' ? D(rec[k]) : (rec[k] || ''));
     if (!A) $('f_MachineName2').value = rec.MachineName || '';
     else [['reason','Reason'],['urgent','Urgent']].forEach(([n,k]) => document.querySelectorAll(`input[name=${n}]`).forEach(i => i.checked = i.value === rec[k]));
   }
   $('banner').classList.toggle('hide', !rec);
-  if (rec) $('banner').innerHTML = `⚠️ ใบ ${esc(rec.ID)} ถูกตีกลับโดย ${esc(rec.ReturnBy)}<br><b>${esc(rec.ReturnNote)}</b><br>แก้ไขให้ถูกต้องแล้วกดส่งใหม่ (ลำดับอนุมัติจะเริ่มใหม่)`;
-  $('btnSend').textContent = rec ? 'ส่งใบที่แก้ไขแล้ว' : 'ส่งใบขอสร้าง/ซ่อม';
-  drawPrev(); window.scrollTo(0, 0);
+  if (rec) $('banner').innerHTML = `⚠️ ใบ ${esc(rec.ID)} ถูกตีกลับโดย ${esc(rec.ReturnBy)}<br><b>${esc(rec.ReturnNote)}</b><br>แก้ไขให้ถูกต้องแล้วกดส่งใหม่ (ลำดับอนุมัติจะเริ่มใหม่ที่หัวหน้างาน)`;
+  $('btnSend').textContent = rec ? 'ส่งใบที่แก้ไขแล้ว' : 'ส่งใบขอสร้าง/ซ่อม'; drawPrev();
 }
-const mine = r => (U.role==='leader'&&r.Status==='PENDING_LEADER')||(U.role==='mgr'&&r.Status==='PENDING_MGR')||(U.role==='mt'&&r.Status==='SENT_MT')
-  ? '⏳ รอคุณอนุมัติ/ดำเนินการ' : (r.Status==='RETURNED' && r.RequesterID===U.id ? '⚠️ ถูกตีกลับ รอคุณแก้ไข' : '');
+
+const mine = r => (role()==='leader'&&r.Status==='PENDING_LEADER')||(role()==='mgr'&&r.Status==='PENDING_MGR')||(role()==='mt'&&r.Status==='SENT_MT')
+  ? '⏳ รอคุณดำเนินการ' : (r.Status==='RETURNED' && r._own ? '⚠️ ถูกตีกลับ รอคุณแก้ไข' : '');
 const ttl = r => r.FormType === 'B' ? 'แจ้งซ่อม — ' + (r.MachineName || '') : (r.Reason || 'งานขอให้ผลิต') + ' — ' + (r.PartName || '');
 async function load() {
+  if (!U) return;
   $('list').innerHTML = '<div class="sp"></div>';
   const r = await call('list');
   if (!r.ok) { $('list').innerHTML = '<p class="sm">'+esc(r.err)+'</p>'; return; }
@@ -208,9 +239,27 @@ async function load() {
     <div class="card item st-${r.Status}" onclick="detail(${i})">
       <div class="top"><b>${esc(r.ID)}</b><span class="tag ${r.Status}">${ST[r.Status]}</span></div>
       <div>${esc(ttl(r))}</div>
-      <div class="sm">${esc(r.MachineNo)} · ${esc(r.RequesterName)} · ${esc(r.CreatedAt)}</div>
+      <div class="sm">${esc(r.Dept)} · ${esc(r.RequesterName)} · ${esc(r.CreatedAt)}</div>
       ${mine(r)?'<div style="color:var(--w);font-weight:600;margin-top:6px">'+mine(r)+'</div>':''}
     </div>`).join('') : '<p class="sm">ยังไม่มีรายการ</p>';
+}
+
+/* ติดตามใบงาน (สาธารณะ) */
+function renderRecent() {
+  const r = recent(); $('recent').innerHTML = r.length ? r.map((x,i) => `<button type="button" class="mini" onclick="trackRecent(${i})">${esc(x.no)}</button>`).join('') : '<span class="sm">ยังไม่มี</span>';
+}
+const trackRecent = i => { const x = recent()[i]; doTrack(x.no, x.name); };
+const trackGo = e => { e.preventDefault(); doTrack($('t_no').value.trim().toUpperCase(), $('t_name').value.trim()); return false; };
+async function doTrack(no, name) {
+  const r = await call('track', {no, name});
+  if (!r.ok) return alert(r.err);
+  r.row._own = true; rows = [r.row]; addRecent(no, name); detail(0);
+}
+function showDone(id) {
+  $('done').innerHTML = `<div style="font-size:44px">✅</div><h3 style="margin:4px 0">ส่งใบงานเรียบร้อย</h3><div class="sm">เลขที่ใบงาน</div><b class="big">${esc(id)}</b>
+    <div class="sm">จดเลขที่นี้ไว้เพื่อติดตามสถานะ (บันทึกไว้ในเครื่องนี้ให้แล้ว) · ระบบส่งให้หัวหน้างานรับทราบต่อไป</div>
+    <button class="p" onclick="tab('new')">สร้างใบใหม่</button><button class="p s" onclick="tab('track')">ติดตามใบงาน</button>`;
+  panes('done');
 }
 
 /* ปากกาวาด (ใช้ทั้งร่างแบบและลายเซ็น) */
@@ -238,16 +287,19 @@ const drawPrev = () => $('prev').innerHTML =
   photos.map((p,i) => `<div class="x"><img src="${p}"><i onclick="photos.splice(${i},1);drawPrev()">×</i></div>`).join('');
 
 async function submitNew(e) {
-  e.preventDefault(); const b = $('btnSend'), A = FORM === 'A'; b.disabled = true; b.textContent = 'กำลังส่ง...';
-  const g = k => $('f_'+k).value.trim(), data = {};
-  (A ? ['ReasonDetail','PartName','Qty','DueDate','Detail'] : ['LeaderName','MachineNo','Line','Abnormal']).forEach(k => data[k] = g(k));
+  e.preventDefault(); const b = $('btnSend'), A = FORM === 'A', lbl = editRec ? 'ส่งใบที่แก้ไขแล้ว' : 'ส่งใบขอสร้าง/ซ่อม';
+  b.disabled = true; b.textContent = 'กำลังส่ง...';
+  const g = k => $('f_'+k).value.trim(), data = {}, who = {name:g('name'), dept:$('f_dept').value};
+  (A ? ['ReasonDetail','PartName','Qty','DueDate','Detail'] : ['MachineNo','Line','Abnormal']).forEach(k => data[k] = g(k));
   data.MachineName = g(A ? 'MachineName' : 'MachineName2');
   if (A) { data.Reason = rv('reason'); data.Urgent = rv('urgent'); }
   const sketch = A && skPad ? skPad.url() : '';
-  const r = editRec ? await call('resubmit', {rid:editRec.ID, data, sketch, photos, keep}) : await call('create', {form:FORM, data, sketch, photos});
-  b.disabled = false;
-  if (!r.ok) { b.textContent = editRec ? 'ส่งใบที่แก้ไขแล้ว' : 'ส่งใบขอสร้าง/ซ่อม'; return alert(r.err); }
-  alert(editRec ? 'ส่งใบที่แก้ไขแล้ว' : 'ส่งแล้ว เลขที่ ' + r.id); tab('list'); load();
+  const r = editRec ? await call('resubmit', {rid:editRec.ID, name:editRec.RequesterName, dept:who.dept, data, sketch, photos, keep})
+                    : await call('create', {form:FORM, ...who, data, sketch, photos});
+  b.disabled = false; b.textContent = lbl;
+  if (!r.ok) return alert(r.err);
+  const id = editRec ? editRec.ID : r.id;
+  localStorage.setItem('mtwho', JSON.stringify(who)); addRecent(id, who.name); showDone(id);
 }
 
 /* ---------- รายละเอียดใบงาน ---------- */
@@ -274,42 +326,44 @@ const sumH = () => $('m_TotalHrs').value = Math.round(((+$('m_WaitHrs').value||0
 
 function detail(i) {
   const r = rows[i]; let ph = [], rl = []; try { ph = JSON.parse(r.Photos || '[]'); rl = JSON.parse(r.Returns || '[]'); } catch(e) {}
-  const my = r.Status === 'RETURNED' && r.RequesterID === U.id, st = mine(r), isMT = U.role === 'mt', A = r.FormType !== 'B';
-  const act_ = st.startsWith('⏳');
-  $('vDetail').innerHTML = `<button class="p s" style="margin:0 0 12px" onclick="show('vApp')">← กลับ</button>
+  const my = r.Status === 'RETURNED' && r._own, st = mine(r), isMT = role() === 'mt', isLeader = role() === 'leader', A = r.FormType !== 'B', act_ = st.startsWith('⏳');
+  $('vDetail').innerHTML = `<button class="p s" onclick="show('vApp')">← กลับ</button>
   <div class="card"><div class="top"><b>MT No: ${esc(r.ID)}</b><span class="tag ${r.Status}">${ST[r.Status]}</span></div>
     <div class="sm">${A ? 'ฟอร์ม A · งานขอให้ผลิต' : 'ฟอร์ม B · งานแจ้งซ่อมเครื่องจักร'} · วันที่รับเอกสาร ${esc(r.CreatedAt)}</div></div>
   ${r.Status === 'RETURNED' ? `<div class="card bar"><b>ถูกตีกลับโดย ${esc(r.ReturnBy)}</b> <span class="sm">${esc(r.ReturnAt)}</span><br>${esc(r.ReturnNote)}
     ${my ? `<button class="p o" onclick="pickForm('${r.FormType}', rows[${i}])">✏️ แก้ไขและส่งใหม่</button>` : ''}</div>` : ''}
   ${A ? `<div class="card"><div class="sec">A. งานขอให้ผลิต <small>Design Job</small></div>
     ${kv('เหตุผล', r.Reason)}${kv('ชื่องาน', r.ReasonDetail)}${kv('ชื่อชิ้นส่วน', r.PartName)}${kv('ชื่อเครื่องจักร', r.MachineName)}
-    ${kv('จำนวน', r.Qty)}${kv('วันที่กำหนดเสร็จ', D(r.DueDate))}${kv('ความเร่งด่วน', r.Urgent)}${kv('รายละเอียด', r.Detail)}${kv('แผนก', r.Dept)}${kv('ผู้ขอ', r.RequesterName)}
+    ${kv('จำนวน', r.Qty)}${kv('วันที่กำหนดเสร็จ', D(r.DueDate))}${kv('ความเร่งด่วน', r.Urgent)}${kv('รายละเอียด', r.Detail)}${kv('แผนก', r.Dept)}${kv('ผู้กรอก', r.RequesterName)}
     ${r.Sketch ? `<div class="sm" style="margin-top:8px">ร่างแบบ</div><a href="${r.Sketch}" target="_blank"><img src="${r.Sketch}" style="width:100%;border:1px solid #ddd;border-radius:8px;background:#fff"></a>` : ''}</div>`
   : `<div class="card"><div class="sec">B. งานแจ้งซ่อมเครื่องจักร <small>Repair Job Machine</small></div>
-    ${kv('แผนก', r.Dept)}${kv('ผู้แจ้ง', r.RequesterName)}${kv('หัวหน้าหน่วยงาน', r.LeaderName)}${kv('ชื่อเครื่องจักร', r.MachineName)}${kv('หมายเลขเครื่อง', r.MachineNo)}${kv('สายการผลิต', r.Line)}${kv('ความผิดปกติ', r.Abnormal)}</div>`}
+    ${kv('แผนก', r.Dept)}${kv('ผู้กรอก', r.RequesterName)}${kv('ชื่อเครื่องจักร', r.MachineName)}${kv('หมายเลขเครื่อง', r.MachineNo)}${kv('สายการผลิต', r.Line)}${kv('ความผิดปกติ', r.Abnormal)}</div>`}
   ${ph.length ? `<div class="card"><b>รูปถ่าย</b><div class="ph">${ph.map(u => `<a href="${u}" target="_blank"><img src="${u}"></a>`).join('')}</div></div>` : ''}
   ${r.Status === 'MT_DONE' ? `<div class="card"><div class="sec">ผลการดำเนินงานของ MT</div>
     ${kv('วิธีจัดการ', r.Method)}${kv('สาเหตุ', r.Cause)}${kv('รายละเอียด', r.RepairDetail)}${kv('ผลการซ่อม', r.Result)}
     ${r.Since ? kv('ระยะเวลา', D(r.Since) + ' ถึง ' + D(r.Until)) : ''}${kv('รอซ่อม (ชม.)', r.WaitHrs)}${kv('ซ่อมจริง (ชม.)', r.RepairHrs)}${kv('รวม (ชม.)', r.TotalHrs)}
     ${kv('ดำเนินการโดย', r.RepairBy)}${kv('วันที่เสร็จ', D(r.FinishDate))}${kv('บันทึก 4M', r.FourM ? 'เรียบร้อย' : '')}</div>` : ''}
   <div class="card"><b>ลำดับการอนุมัติ</b>
-    ${stepHtml('0) ผู้สร้างใบงาน', r.RequesterName, r.CreatedAt, '', '')}
-    ${stepHtml('1) หัวหน้างาน', r.LeaderBy, r.LeaderAt, r.LeaderSig, r.LeaderNote)}${stepHtml('2) Production Manager', r.MgrBy, r.MgrAt, r.MgrSig, r.MgrNote)}
+    ${stepHtml('0) ผู้กรอกใบงาน', r.RequesterName + ' (' + r.Dept + ')', r.CreatedAt, '', '')}
+    ${stepHtml('1) หัวหน้างาน — รับทราบ', r.LeaderBy, r.LeaderAt, '', r.LeaderNote)}${stepHtml('2) Production Manager — อนุมัติ', r.MgrBy, r.MgrAt, r.MgrSig, r.MgrNote)}
     ${stepHtml('3) แผนก MT', r.MTBy, r.MTAt, '', '')}
     ${rl.length ? '<div class="step"><b>ประวัติการตีกลับ</b>' + rl.map(x => `<div class="sm">• ${esc(x.at)} ${esc(x.by)}: ${esc(x.note)}</div>`).join('') + '</div>' : ''}</div>
   ${act_ && isMT ? mtForm(r) : ''}
-  ${act_ && !isMT ? `<div class="card"><label class="l">หมายเหตุ / สิ่งที่ต้องแก้ไข</label><textarea id="note"></textarea>
+  ${act_ && isLeader ? `<div class="card"><div class="sec">หัวหน้างาน — รับทราบใบงาน</div>
+    <label class="l" style="margin-top:0">หมายเหตุ / สิ่งที่ต้องแก้ไข (กรณีตีกลับ)</label><textarea id="note"></textarea>
+    <div class="row"><button class="p o" onclick="act('${r.ID}','return')">ตีกลับให้ผู้กรอกแก้ไข</button><button class="p g" onclick="act('${r.ID}','approve')">✔ รับทราบใบงาน</button></div></div>` : ''}
+  ${act_ && role() === 'mgr' ? `<div class="card"><label class="l" style="margin-top:0">หมายเหตุ / สิ่งที่ต้องแก้ไข</label><textarea id="note"></textarea>
     <label class="l">ลายเซ็น (ใช้เมื่ออนุมัติ)</label><canvas id="sig" style="height:150px"></canvas><button type="button" class="mini" onclick="sigPad.clear()">ล้างลายเซ็น</button>
-    <button class="p o" onclick="act('${r.ID}','return')">ตีกลับให้ผู้สร้างแก้ไข</button>
+    <button class="p o" onclick="act('${r.ID}','return')">ตีกลับให้ผู้กรอกแก้ไข</button>
     <div class="row"><button class="p r" onclick="act('${r.ID}','reject')">ไม่อนุมัติ</button><button class="p g" onclick="act('${r.ID}','approve')">อนุมัติ</button></div></div>` : ''}`;
-  show('vDetail'); window.scrollTo(0, 0); sigPad = act_ && !isMT ? mkPad($('sig')) : null;
+  show('vDetail'); window.scrollTo(0, 0); sigPad = act_ && role() === 'mgr' ? mkPad($('sig')) : null;
 }
 async function act(rid, mode) {
   const note = $('note').value.trim();
   if (mode === 'return' && !note) return alert('กรุณาระบุสิ่งที่ต้องแก้ไข');
   if (mode === 'reject' && !note) return alert('กรุณาใส่เหตุผลที่ไม่อนุมัติ');
-  if (mode === 'approve' && (!sigPad || !sigPad.has())) return alert('กรุณาเซ็นชื่อก่อนอนุมัติ');
-  if (mode === 'return' && !confirm('ตีกลับใบนี้ให้ผู้สร้างแก้ไข?')) return;
+  if (mode === 'approve' && role() === 'mgr' && (!sigPad || !sigPad.has())) return alert('กรุณาเซ็นชื่อก่อนอนุมัติ');
+  if (mode === 'return' && !confirm('ตีกลับใบนี้ให้ผู้กรอกแก้ไข?')) return;
   const r = await call('act', {rid, mode, note, sig: sigPad ? sigPad.url() : ''});
   if (!r.ok) return alert(r.err); show('vApp'); load();
 }
@@ -322,7 +376,7 @@ async function closeJob(rid) {
 }
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-U ? start() : show('vLogin');
+hdr(); loadDepts(); U ? start() : (show('vApp'), tab('new'));
 </script>
 </body>
 </html>
