@@ -124,8 +124,6 @@ canvas{width:100%;border:1.5px dashed #9aa6b4;border-radius:12px;background:#fff
       <div class="row"><div><label class="l">จำนวน <small>Q'ty</small></label><input id="f_Qty" inputmode="numeric"></div>
       <div><label class="l">วันที่กำหนดเสร็จ <small>Due Date</small></label><input id="f_DueDate" type="date"></div></div>
       <label class="l">ความเร่งด่วน</label><div class="chips" id="c_urgent"></div>
-      <label class="l">วาดเค้าโครง / ร่างแบบ <small>Draft drawing (ถ้าแก้ไข: วาดใหม่เฉพาะเมื่อต้องการเปลี่ยน)</small></label>
-      <canvas id="sk"></canvas><button type="button" class="mini" onclick="skPad.clear()">ล้างภาพวาด</button>
       <label class="l">รายละเอียดเพิ่มเติม <small>Detail</small></label><textarea id="f_Detail"></textarea>
     </fieldset>
 
@@ -165,7 +163,7 @@ const ST = {PENDING_LEADER:'รอหัวหน้างานรับทร�
 const REASON = ['งานสร้าง','งานซ่อมเครื่องมือ/อุปกรณ์','งานอื่นๆ'], URGENT = ['ต้องเสร็จตามกำหนด','ปรับกำหนดการได้'];
 const METHOD = ['ซ่อมเองได้ – ทันที','ซ่อมเองได้ – รอสั่งซื้ออะไหล่/PR','ซ่อมเองไม่ได้ – สั่งซื้อใหม่','ซ่อมเองไม่ได้ – ติดต่อ Maker'];
 const CAUSE = ['Man Mistake','Machine Mistake','อื่นๆ'], RESULT = ['ยืนยันผลด้วย PPK','ไม่ต้องยืนยันผลด้วย PPK'];
-let U = JSON.parse(localStorage.getItem('mtu') || 'null'), rows = [], photos = [], keep = [], skPad = null, sigPad = null, FORM = null, editRec = null, DEPTS = [];
+let U = (()=>{try{const x=JSON.parse(localStorage.getItem('mtu')||'null');return x&&x.token?x:null}catch(e){return null}})(), rows = [], photos = [], keep = [], sigPad = null, FORM = null, editRec = null, DEPTS = [];
 const role = () => U ? U.role : '';
 const recent = () => { try { return JSON.parse(localStorage.getItem('mtmine') || '[]') } catch(e) { return [] } };
 const addRecent = (no, name) => localStorage.setItem('mtmine', JSON.stringify([{no, name}, ...recent().filter(x => x.no !== no)].slice(0, 10)));
@@ -176,7 +174,7 @@ const D = v => String(v || '').slice(0, 10);
 $('c_reason').innerHTML = chips('reason', REASON, 1); $('c_urgent').innerHTML = chips('urgent', URGENT, 1);
 
 async function call(a, d = {}) {
-  try { return await (await fetch(API, {method:'POST', body: JSON.stringify({a, id:U?.id, pin:U?.pin, ...d})})).json(); }
+  try { return await (await fetch(API, {method:'POST', body: JSON.stringify({a, id:U?.id, token:U?.token, pin:U?.pin, ...d})})).json(); }
   catch (e) { return {ok:false, err:'เชื่อมต่อไม่ได้ (ออฟไลน์?)'}; }
 }
 const show = v => ['vLogin','vApp','vDetail'].forEach(x => $(x).classList.toggle('hide', x !== v));
@@ -214,7 +212,6 @@ async function pickForm(f, rec) {
   $('fsA').classList.toggle('hide', !A); $('fsA').disabled = !A; $('fsB').classList.toggle('hide', A); $('fsB').disabled = A;
   let w = {}; try { w = JSON.parse(localStorage.getItem('mtwho') || '{}') } catch(e) {}
   $('f_name').value = rec ? rec.RequesterName : (w.name || ''); $('f_name').readOnly = !!rec; $('f_dept').value = rec ? rec.Dept : (w.dept || '');
-  if (A) { if (!skPad) skPad = mkPad($('sk')); skPad.clear(); }
   if (rec) {
     (A ? ['ReasonDetail','PartName','MachineName','Qty','DueDate','Detail'] : ['MachineNo','Line','Abnormal']).forEach(k => $('f_'+k).value = k==='DueDate' ? D(rec[k]) : (rec[k] || ''));
     if (!A) $('f_MachineName2').value = rec.MachineName || '';
@@ -293,9 +290,8 @@ async function submitNew(e) {
   (A ? ['ReasonDetail','PartName','Qty','DueDate','Detail'] : ['MachineNo','Line','Abnormal']).forEach(k => data[k] = g(k));
   data.MachineName = g(A ? 'MachineName' : 'MachineName2');
   if (A) { data.Reason = rv('reason'); data.Urgent = rv('urgent'); }
-  const sketch = A && skPad ? skPad.url() : '';
-  const r = editRec ? await call('resubmit', {rid:editRec.ID, name:editRec.RequesterName, dept:who.dept, data, sketch, photos, keep})
-                    : await call('create', {form:FORM, ...who, data, sketch, photos});
+  const r = editRec ? await call('resubmit', {rid:editRec.ID, name:editRec.RequesterName, dept:who.dept, form:FORM, data, photos, keep})
+                    : await call('create', {form:FORM, ...who, data, photos});
   b.disabled = false; b.textContent = lbl;
   if (!r.ok) return alert(r.err);
   const id = editRec ? editRec.ID : r.id;
